@@ -14,7 +14,7 @@ group :test, :development do
   gem 'autotest'
 end
 
-group :development, :production do
+group :development do
   gem 'pg'
 end
 
