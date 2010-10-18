@@ -10,7 +10,7 @@ class CreateAuctions < ActiveRecord::Migration
       t.integer :per_unit_bid
       t.integer :per_unit_buyout
       t.integer :charges
-      t.text    :seller_name
+      t.string  :seller_name
       t.integer :remaining_time_code
       t.timestamps
     end

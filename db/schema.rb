@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20101018133432) do
     t.integer  "per_unit_bid"
     t.integer  "per_unit_buyout"
     t.integer  "charges"
-    t.text     "seller_name"
+    t.string   "seller_name"
     t.integer  "remaining_time_code"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -33,9 +33,9 @@ ActiveRecord::Schema.define(:version => 20101018133432) do
 
   create_table "items", :force => true do |t|
     t.integer  "item_id"
-    t.text     "name"
+    t.string   "name"
     t.integer  "item_level"
-    t.text     "icon"
+    t.string   "icon"
     t.integer  "required_level"
     t.integer  "quality_code"
     t.datetime "created_at"

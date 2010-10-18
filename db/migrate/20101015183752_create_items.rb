@@ -2,9 +2,9 @@ class CreateItems < ActiveRecord::Migration
   def self.up
     create_table :items do |t|
       t.integer :item_id
-      t.text    :name
+      t.string  :name
       t.integer :item_level
-      t.text    :icon
+      t.string  :icon
       t.integer :required_level
       t.integer :quality_code
       t.timestamps
