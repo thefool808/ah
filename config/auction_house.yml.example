@@ -1,0 +1,5 @@
+user: __user_name__
+pass: __password__
+root: "http://us.wowarmory.com/auctionhouse/"
+query_url: "http://us.wowarmory.com/auctionhouse/search.json"
+user_agent: "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.4) Gecko/20100513 Firefox/3.6.4"

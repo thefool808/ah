@@ -1,0 +1,2 @@
+module AuctionHouseQueriesHelper
+end

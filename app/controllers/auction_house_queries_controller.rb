@@ -1,0 +1,2 @@
+class AuctionHouseQueriesController < ApplicationController
+end
