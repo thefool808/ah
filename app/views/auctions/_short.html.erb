@@ -5,8 +5,6 @@
     <th>Quantity</th>
     <th>Total Buyout</th>
     <th>Buyout Per</th>
-    <th>First Seen</th>
-    <th>Last Seen</th>
   </tr>
   </thead>
   <tbody>
@@ -16,8 +14,6 @@
     <td><%= auction.quantity %></td>
     <td><%= raw_to_wow auction.buyout %></td>
     <td><%= raw_to_wow auction.per_unit_buyout %></td>
-    <td><%= datetime auction.first_seen_at %></td>
-    <td><%= datetime auction.last_seen_at %></td>
   </tr>
   <% end -%>
   </tbody>
