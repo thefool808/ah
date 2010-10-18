@@ -1,4 +1,6 @@
 Ah::Application.routes.draw do
+  resources :scans
+
   resources :auctions
 
   resources :items do

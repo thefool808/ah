@@ -1,4 +1,4 @@
-class AuctionHouseQuery# < ActiveRecord::Base
+class Query# < ActiveRecord::Base
   SortingParameters = [
     'rarity',     # epics first
     'name',       # alphabetical

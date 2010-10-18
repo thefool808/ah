@@ -55,7 +55,7 @@ class AuctionHouse# < ActiveRecord::Base
   #   agent.cookies
   # end
 
-  def search(query)
+  def search(query, scan = false)
     start = 0
     count = 0
     while true do
@@ -76,12 +76,22 @@ class AuctionHouse# < ActiveRecord::Base
       break if auctions.empty?
 
       count += auctions.length
-      auctions.each{|a| Auction.find_or_create_from_auction_hash(a)}
+      auctions.each{|auction| Auction.find_or_create_from_auction_hash(auction, scan)}
 
       sleep(SLEEP_TIME)
       start += 50
     end
     return count
+  end
+
+  def self.import_all
+    ah = new
+    ah.login!
+    current_scan = Scan.create!(:started_at => Time.now())
+    results = ah.search(Query.everything, current_scan)
+    current_scan.finished_at = Time.now()
+    current_scan.auction_count = results
+    current_scan.save
   end
 
 private

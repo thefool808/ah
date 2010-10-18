@@ -1,15 +1,13 @@
 class Auction < ActiveRecord::Base
-  alias_attribute :first_seen_at, :created_at
-  alias_attribute :last_seen_at,  :updated_at
-
   belongs_to :item
 
-  def self.find_or_create_from_auction_hash(auction_hash)
+  def self.find_or_create_from_auction_hash(auction_hash, scan = false)
     a = find_by_auction_id(auction_hash["auc"])
-    if a
-      a.touch
-    else
+    if a && scan
+      a.update_attribute(:last_seen_scan_id, scan.id)
+    elsif !a
       a = new(extract_attributes_from_auction_hash(auction_hash))
+      a.first_seen_scan_id = scan.id if scan
       a.save
     end
     return a

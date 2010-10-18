@@ -7,7 +7,6 @@ class CreateItems < ActiveRecord::Migration
       t.string  :icon
       t.integer :required_level
       t.integer :quality_code
-      t.timestamps
     end
     add_index :items, :item_id, :unique => true
     add_index :items, :name

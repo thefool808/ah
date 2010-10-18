@@ -12,7 +12,8 @@ class CreateAuctions < ActiveRecord::Migration
       t.integer :charges
       t.string  :seller_name
       t.integer :remaining_time_code
-      t.timestamps
+      t.integer :first_seen_scan_id
+      t.integer :last_seen_scan_id
     end
     add_index (:auctions, :auction_id, :unique => true)
     add_index (:auctions, :item_id)

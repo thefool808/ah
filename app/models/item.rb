@@ -2,7 +2,7 @@ class Item < ActiveRecord::Base
   has_many :auctions
 
   def search_auction_house
-    AuctionHouse.new.login!.search(AuctionHouseQuery.for_item(self))
+    AuctionHouse.new.login!.search(Query.for_item(self))
   end
 
   def self.find_or_create_from_auction_hash(auction_hash)
