@@ -10,9 +10,13 @@
 </head>
 <body>
   <div id="container">
-    <div id="header">Header</div>
-    <div id="search"><%= render :partial => 'items/search' %></div>
+    <div id="header"></div>
+    <div id="search">
+      <%= render :partial => 'items/search' %>
+    </div>
     <div id="content">
+      <h2>Auction House</h2>
+      <br />
       <%= yield %>
     </div>
   </div>

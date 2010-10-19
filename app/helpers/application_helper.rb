@@ -12,4 +12,9 @@ module ApplicationHelper
     return "n/a" if date.nil?
     date.strftime("%m/%d/%Y - %I:%M %p")
   end
+
+  def time(float)
+    min, sec = (float / 60).to_s.split(".")
+    sprintf("%sm %ds", min, ("0.#{sec}".to_f * 60).round)
+  end
 end

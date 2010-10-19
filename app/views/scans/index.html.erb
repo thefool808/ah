@@ -1,0 +1,27 @@
+<table id="scans" class="tablesorter">
+  <thead>
+  <tr>
+    <th>Started At</th>
+    <th>Finished At</th>
+    <th>Running Time</th>
+    <th>Auctions Found</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for scan in @scans -%>
+  <tr>
+    <td><%= datetime scan.started_at %></td>
+    <td><%= datetime scan.finished_at %></td>
+    <td><%= time scan.running_time %></td>
+    <td><%= scan.auction_count %></td>
+  </tr>
+  <% end -%>
+  </tbody>
+</table>
+<script type="text/javascript">
+$(document).ready(function()
+    {
+        $("#scans").tablesorter();
+    }
+);
+</script>
