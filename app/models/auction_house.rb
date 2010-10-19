@@ -8,7 +8,7 @@ class AuctionHouse# < ActiveRecord::Base
   AUTHENTICATOR_URL = '/login/en/authenticator'
   MAINTENANCE_URL = '/common/static/maintenance'
 
-  SLEEP_TIME = 0.55
+  SLEEP_TIME = 0.75
 
   class_attribute :config
   self.config = YAML.load(File.open(CONFIG_FILE))
@@ -68,12 +68,12 @@ class AuctionHouse# < ActiveRecord::Base
         auctions = do_query(query)
       rescue ThrottleError
         logger.info "Throttled!"
-        if !throttled?
-          @throttled = true
+        # unless throttled?
+          # @throttled = true
           sleep(SLEEP_TIME)
           retry
-        end
-        raise $!
+        # end
+        # raise $!
       end
 
       break if auctions.empty?
@@ -124,7 +124,12 @@ private
       self.class.last_query_time = Time.now
     else
       diff = Time.now - self.class.last_query_time
-      sleep(SLEEP_TIME - diff) if diff < SLEEP_TIME
+      if diff < SLEEP_TIME
+        sleep_time = SLEEP_TIME - diff
+        logger.info "sleeping #{SLEEP_TIME} - #{diff} : #{sleep_time}"
+        sleep(sleep_time)
+      end
+      self.class.last_query_time = Time.now
     end
   end
 
