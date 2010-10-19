@@ -42,17 +42,17 @@ class AuctionHouse# < ActiveRecord::Base
     self
   end
 
-  def authenticate!(code)
-    form = agent.current_page.forms.first
-    form['authValue'] = code
-    form.submit
-    puts agent.current_page.uri.request_uri
-    if agent.current_page.uri.request_uri.match(config['root'])
-      return self
-    else
-      raise LoginError, "Could not login (arrived at wrong auction house page)"
-    end
-  end
+  # def authenticate!(code)
+  #   form = agent.current_page.forms.first
+  #   form['authValue'] = code
+  #   form.submit
+  #   puts agent.current_page.uri.request_uri
+  #   if agent.current_page.uri.request_uri.match(config['root'])
+  #     return self
+  #   else
+  #     raise LoginError, "Could not login (arrived at wrong auction house page)"
+  #   end
+  # end
 
   def needs_authenticator?
     !!@needs_auth
@@ -90,11 +90,11 @@ class AuctionHouse# < ActiveRecord::Base
   end
 
   def full_scan
-    self.current_scan = Scan.create!(:started_at => Time.now())
+    self.class.current_scan = Scan.create!(:started_at => Time.now())
     results = search(Query.everything)
-    self.current_scan.finished_at = Time.now()
-    self.current_scan.auction_count = results
-    self.current_scan.save
+    self.class.current_scan.finished_at = Time.now()
+    self.class.current_scan.auction_count = results
+    self.class.current_scan.save
   end
 
 private

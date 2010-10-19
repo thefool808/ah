@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101018191112) do
+ActiveRecord::Schema.define(:version => 20101019184526) do
 
   create_table "auctions", :force => true do |t|
     t.integer "auction_id"
@@ -22,8 +22,8 @@ ActiveRecord::Schema.define(:version => 20101018191112) do
     t.integer "per_unit_bid"
     t.integer "per_unit_buyout"
     t.integer "charges"
-    t.string  "seller_name"
     t.integer "remaining_time_code"
+    t.integer "player_id"
     t.integer "first_seen_scan_id"
     t.integer "last_seen_scan_id"
   end
@@ -42,6 +42,10 @@ ActiveRecord::Schema.define(:version => 20101018191112) do
 
   add_index "items", ["item_id"], :name => "index_items_on_item_id", :unique => true
   add_index "items", ["name"], :name => "index_items_on_name"
+
+  create_table "players", :force => true do |t|
+    t.string "name"
+  end
 
   create_table "scans", :force => true do |t|
     t.integer  "auction_count"

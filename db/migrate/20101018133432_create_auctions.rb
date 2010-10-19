@@ -10,8 +10,8 @@ class CreateAuctions < ActiveRecord::Migration
       t.integer :per_unit_bid
       t.integer :per_unit_buyout
       t.integer :charges
-      t.string  :seller_name
       t.integer :remaining_time_code
+      t.integer :player_id
       t.integer :first_seen_scan_id
       t.integer :last_seen_scan_id
     end
