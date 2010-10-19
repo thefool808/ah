@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ -f "$HOME/.rails_env" ]; then
+  source "$HOME/.rails_env"
+fi
+echo `date`
+echo "RAILS_ENV="$RAILS_ENV
+echo "RAILS_ROOT="$RAILS_ROOT
+cd $RAILS_ROOT && /usr/bin/time -v nice -n15 rake import:all --trace
+echo `date`
+echo finished

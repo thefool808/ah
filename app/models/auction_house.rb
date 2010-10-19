@@ -6,16 +6,23 @@ class AuctionHouse# < ActiveRecord::Base
 
   LOGIN_URL = '/login/en'
   AUTHENTICATOR_URL = '/login/en/authenticator'
+  MAINTENANCE_URL = '/common/static/maintenance'
 
   SLEEP_TIME = 0.55
 
   class_attribute :config
   self.config = YAML.load(File.open(CONFIG_FILE))
 
+  class_attribute :current_scan
+  class_attribute :last_query_time
+
   attr :agent
 
   def login!
     agent.get(config["root"]) do |page|
+      if page.uri.request_uri.match(MAINTENANCE_URL)
+        raise LoginError, 'WowArmory is down for maitenance.  Is it Tuesday?'
+      end
       login_result = page.form_with(:name => "loginForm") do |login|
         login.accountName = config["user"]
         login.password = config["pass"]
@@ -28,7 +35,7 @@ class AuctionHouse# < ActiveRecord::Base
 
       if new_url.match(LOGIN_URL)
         raise LoginError, 'Could not login'
-      elsif new_url.match("/login/en/authenticator") then
+      elsif new_url.match(AUTHENTICATOR_URL) then
         @needs_auth = true
       end
     end
@@ -51,11 +58,7 @@ class AuctionHouse# < ActiveRecord::Base
     !!@needs_auth
   end
 
-  # def cookies
-  #   agent.cookies
-  # end
-
-  def search(query, scan = false)
+  def search(query)
     start = 0
     count = 0
     while true do
@@ -74,24 +77,24 @@ class AuctionHouse# < ActiveRecord::Base
       end
 
       break if auctions.empty?
-
+      import_auctions(auctions)
       count += auctions.length
-      auctions.each{|auction| Auction.find_or_create_from_auction_hash(auction, scan)}
 
-      sleep(SLEEP_TIME)
       start += 50
     end
     return count
   end
 
   def self.import_all
-    ah = new
-    ah.login!
-    current_scan = Scan.create!(:started_at => Time.now())
-    results = ah.search(Query.everything, current_scan)
-    current_scan.finished_at = Time.now()
-    current_scan.auction_count = results
-    current_scan.save
+    new.login!.full_scan
+  end
+
+  def full_scan
+    self.current_scan = Scan.create!(:started_at => Time.now())
+    results = search(Query.everything)
+    self.current_scan.finished_at = Time.now()
+    self.current_scan.auction_count = results
+    self.current_scan.save
   end
 
 private
@@ -103,6 +106,7 @@ private
   end
 
   def do_query(query)
+    throttle
     url = config['query_url'] + query.to_s
     logger.info "Query: #{url}"
     result = agent.get(url)
@@ -115,7 +119,20 @@ private
     return page["auctionSearch"]["auctions"]
   end
 
+  def throttle
+    if self.class.last_query_time.blank?
+      self.class.last_query_time = Time.now
+    else
+      diff = Time.now - self.class.last_query_time
+      sleep(SLEEP_TIME - diff) if diff < SLEEP_TIME
+    end
+  end
+
   def throttled?
     @throttled ||= false
+  end
+
+  def import_auctions(auctions)
+    Auction.import(auctions)
   end
 end

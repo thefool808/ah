@@ -1,13 +1,13 @@
 class Auction < ActiveRecord::Base
   belongs_to :item
 
-  def self.find_or_create_from_auction_hash(auction_hash, scan = false)
+  def self.find_or_create_from_auction_hash(auction_hash)
     a = find_by_auction_id(auction_hash["auc"])
-    if a && scan
-      a.update_attribute(:last_seen_scan_id, scan.id)
+    if a && AuctionHouse.current_scan
+      a.update_attribute(:last_seen_scan_id, AuctionHouse.current_scan.id)
     elsif !a
       a = new(extract_attributes_from_auction_hash(auction_hash))
-      a.first_seen_scan_id = scan.id if scan
+      a.first_seen_scan_id = AuctionHouse.current_scan.id if AuctionHouse.current_scan
       a.save
     end
     return a
