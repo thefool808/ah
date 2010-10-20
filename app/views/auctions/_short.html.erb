@@ -11,35 +11,29 @@
   </thead>
   <tbody>
   <% for auction in auctions -%>
-  <tr class="<%= auction.last_seen_scan_id %>">
-    <td><%= auction.player.name %></td>
-    <td><%= auction.quantity %></td>
-    <td><%= raw_to_wow auction.buyout %></td>
-    <td><%= raw_to_wow auction.per_unit_buyout %></td>
-    <td><%= datetime auction.first_seen_scan.started_at %></td>
-    <td><%= datetime auction.last_seen_scan.started_at %></td>
+  <% style = (auction.last_seen_scan_id == latest_scan_id) ? 'background-color: #FFF;' : '' %>
+  <tr title="<%= render :partial => '/auctions/short_tooltip', :locals => {:auction => auction} %>">
+    <td style="<%= style %>"><%= auction.player.name %></td>
+    <td style="<%= style %>"><%= auction.quantity %></td>
+    <td style="<%= style %>"><%= raw_to_wow auction.buyout %></td>
+    <td style="<%= style %>"><%= raw_to_wow auction.per_unit_buyout %></td>
+    <td style="<%= style %>"><%= datetime auction.first_seen_scan.started_at %></td>
+    <td style="<%= style %>"><%= datetime auction.last_seen_scan.started_at %></td>
   </tr>
   <% end -%>
   </tbody>
 </table>
 <script type="text/javascript">
-// add parser through the tablesorter addParser method
 $.tablesorter.addParser({
-  // set a unique id
   id: 'wow_currency',
-  is: function(s) {
-    // return false so this parser is not auto detected
-    return false;
-  },
+  is: function(s) { return false; },
   format: function(s) {
-    // format your data for normalization
     var ar = s.match(/\d+/g);
+    if (ar.length != 3){ return -1 };
     return parseInt(ar[2]) + (parseInt(ar[1]) * 100) + (parseInt(ar[0]) * 10000);
   },
-  // set type, either numeric or text
   type: 'numeric'
 });
-
 $(document).ready(function() {
   $("#auctions").tablesorter({
     debug: true,
@@ -50,9 +44,10 @@ $(document).ready(function() {
   });
 });
 $(document).ready(function() {
-  $("tr.<%= latest_scan_id %>").
-    css('background-color', '#FFF');
-  $("tr").not(".<%= latest_scan_id %>").
-    css('background-color', '#E0E0E0');
+  $("tr[title]").tooltip({
+    position: "top right",
+    offset: [20, -100],
+    opacity: 0.7
+  });
 });
 </script>

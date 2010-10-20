@@ -21,6 +21,7 @@ table.tablesorter thead tr .header {
 }
 table.tablesorter tbody td {
   color: #3D3D3D;
+  background-color: #E0E0E0;
   padding: 4px;
   vertical-align: top;
 }
