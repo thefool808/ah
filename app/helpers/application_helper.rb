@@ -17,4 +17,8 @@ module ApplicationHelper
     min, sec = (float / 60).to_s.split(".")
     sprintf("%sm %ds", min, ("0.#{sec}".to_f * 60).round)
   end
+
+  def time_from_now(date)
+    return distance_of_time_in_words(date.to_i, Time.now.to_i, true).gsub("about", "") + " ago"
+  end
 end

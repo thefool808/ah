@@ -5,7 +5,16 @@ class Auction < ActiveRecord::Base
   belongs_to :last_seen_scan,  :foreign_key => :last_seen_scan_id,  :class_name => 'Scan'
 
   def self.import(auctions)
-    auctions.each{|auction| find_or_create_from_auction_hash(auction)}
+    auctions.each{|auction| find_or_create_from_auction_hash(auction) unless auction_hash["buy"].blank?}
+  end
+
+  def self.import(auctions)
+    aucs = auctions.dup.delete_if{|a| a["buy"].blank?}
+    auc_ids = aucs.collect{|a| a["auc"]}
+    existing_aucs = where(:auction_id => auc_ids)
+    existing_auc_ids = existing_aucs.collect{|a| a.auction_id}
+    new_auction_ids = auc_ids - existing_auc_ids
+    aucs.each{|a| create_from_auction_hash(a) if new_auction_ids.include?(a["auc"])}
   end
 
   def self.find_or_create_from_auction_hash(auction_hash)
@@ -29,7 +38,7 @@ class Auction < ActiveRecord::Base
   end
 
   def per_unit_buyout
-    self[:per_unit_buyout] || self[:buyout] || self[:per_unit_bid] || self[:next_minimum_bid]
+    self.buyout / self.quantity
   end
 
 private
@@ -37,15 +46,9 @@ private
     item = Item.find_or_create_from_auction_hash(auction_hash)
     player = Player.find_or_create_by_name(auction_hash["seller"])
     {
-      :remaining_time_code => auction_hash["time"],
-      :next_minimum_bid    => auction_hash["nbid"],
       :auction_id          => auction_hash["auc"],
       :buyout              => auction_hash["buy"],
-      :charges             => auction_hash["charges"],
-      :current_bid         => auction_hash["bid"],
       :quantity            => auction_hash["quan"],
-      :per_unit_bid        => auction_hash["ppuBid"],
-      :per_unit_buyout     => auction_hash["ppuBuy"],
       :player_id           => player.id,
       :item_id             => item.id
     }

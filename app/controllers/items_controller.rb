@@ -2,7 +2,6 @@ class ItemsController < ApplicationController
   def index; end
 
   def show
-    @latest_scan = Scan.find(:last)
     @item = Item.find(
       params[:id],
       :include => {:auctions => [:last_seen_scan, :first_seen_scan, :player]}

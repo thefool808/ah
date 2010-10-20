@@ -1,6 +1,6 @@
 class Scan < ActiveRecord::Base
   def self.latest_scan_id
-    find(:last).id
+    return @latest_scan_id ||= find(:last).id
   end
 
   def running_time

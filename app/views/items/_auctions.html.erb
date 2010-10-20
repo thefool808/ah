@@ -11,9 +11,9 @@
   </thead>
   <tbody>
   <% for auction in auctions -%>
-  <% style = (auction.last_seen_scan_id == latest_scan_id) ? 'background-color: #FFF;' : '' %>
-  <tr title="<%= render :partial => '/auctions/short_tooltip', :locals => {:auction => auction} %>">
-    <td style="<%= style %>"><%= auction.player.name %></td>
+  <% style = (auction.last_seen_scan_id == Scan.latest_scan_id) ? 'background-color: #FFF;' : '' %>
+  <tr title="Auction ID: <%= auction.auction_id %>">
+    <td style="<%= style %>"><%= link_to auction.player.name, player_url(auction.player) %></td>
     <td style="<%= style %>"><%= auction.quantity %></td>
     <td style="<%= style %>"><%= number_to_wow_currency auction.buyout %></td>
     <td style="<%= style %>"><%= number_to_wow_currency auction.per_unit_buyout %></td>

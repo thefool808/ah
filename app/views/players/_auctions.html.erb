@@ -1,0 +1,53 @@
+<table id="auctions" class="tablesorter">
+  <thead>
+  <tr>
+    <th>Item</th>
+    <th>Quantity</th>
+    <th>Total Buyout</th>
+    <th>Buyout Per</th>
+    <th>First Seen</th>
+    <th>Last Seen</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% for auction in auctions -%>
+  <% style = (auction.last_seen_scan_id == Scan.latest_scan_id) ? 'background-color: #FFF;' : '' %>
+  <tr title="Auction ID: <%= auction.auction_id %>">
+    <td style="<%= style %>"><%= link_to auction.item.name, item_url(auction.item) %></td>
+    <td style="<%= style %>"><%= auction.quantity %></td>
+    <td style="<%= style %>"><%= number_to_wow_currency auction.buyout %></td>
+    <td style="<%= style %>"><%= number_to_wow_currency auction.per_unit_buyout %></td>
+    <td style="<%= style %>"><%= time_from_now auction.first_seen_scan.started_at %></td>
+    <td style="<%= style %>"><%= time_from_now auction.last_seen_scan.started_at %></td>
+  </tr>
+  <% end -%>
+  </tbody>
+</table>
+<script type="text/javascript">
+$.tablesorter.addParser({
+  id: 'wow_currency',
+  is: function(s) { return false; },
+  format: function(s) {
+    var ar = s.match(/\d+/g);
+    if (ar.length != 3){ return -1 };
+    return parseInt(ar[2]) + (parseInt(ar[1]) * 100) + (parseInt(ar[0]) * 10000);
+  },
+  type: 'numeric'
+});
+$(document).ready(function() {
+  $("#auctions").tablesorter({
+    debug: true,
+    headers: {
+      2: {sorter:'wow_currency'},
+      3: {sorter:'wow_currency'}
+    }
+  });
+});
+$(document).ready(function() {
+  $("tr[title]").tooltip({
+    position: "top right",
+    offset: [20, -100],
+    opacity: 0.7
+  });
+});
+</script>
