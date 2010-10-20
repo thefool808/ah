@@ -9,10 +9,13 @@ class Item < ActiveRecord::Base
   def self.find_or_create_from_auction_hash(auction_hash)
     i = find_by_item_id(auction_hash["id"])
     unless i
-      i = new(extract_attributes_from_auction_hash(auction_hash))
-      i.save
+      i = create_from_auction_hash(auction_hash)
     end
     return i
+  end
+
+  def self.create_from_auction_hash(auction_hash)
+    create(extract_attributes_from_auction_hash(auction_hash))
   end
 
   def current_buyouts
