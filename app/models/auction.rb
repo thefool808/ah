@@ -20,7 +20,10 @@ class Auction < ActiveRecord::Base
 
   def self.create_from_auction_hash(auction_hash)
     a = new(extract_attributes_from_auction_hash(auction_hash))
-    a.first_seen_scan_id = AuctionHouse.current_scan.id if AuctionHouse.current_scan
+    if AuctionHouse.current_scan
+      a.first_seen_scan_id = AuctionHouse.current_scan.id
+      a.last_seen_scan_id = AuctionHouse.current_scan.id
+    end
     a.save
     return a
   end
