@@ -8,7 +8,7 @@ class AuctionHouse# < ActiveRecord::Base
   AUTHENTICATOR_URL = '/login/en/authenticator'
   MAINTENANCE_URL = '/common/static/maintenance'
 
-  SLEEP_TIME = 0.75
+  SLEEP_TIME = 0.65
 
   class_attribute :config
   self.config = YAML.load(File.open(CONFIG_FILE))

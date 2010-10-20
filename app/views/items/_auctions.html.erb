@@ -17,8 +17,8 @@
     <td style="<%= style %>"><%= auction.quantity %></td>
     <td style="<%= style %>"><%= number_to_wow_currency auction.buyout %></td>
     <td style="<%= style %>"><%= number_to_wow_currency auction.per_unit_buyout %></td>
-    <td style="<%= style %>"><%= datetime auction.first_seen_scan.started_at %></td>
-    <td style="<%= style %>"><%= datetime auction.last_seen_scan.started_at %></td>
+    <td style="<%= style %>"><%= time_from_now auction.first_seen_scan.started_at %></td>
+    <td style="<%= style %>"><%= time_from_now auction.last_seen_scan.started_at %></td>
   </tr>
   <% end -%>
   </tbody>

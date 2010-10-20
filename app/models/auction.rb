@@ -18,23 +18,29 @@ class Auction < ActiveRecord::Base
     existing_auc_ids = existing_aucs.collect{|a| a.auction_id}
 
     # update the last_seen_scan_id on all the existing auctions
-    # sql = "UPDATE auctions SET last_seen_scan_id = ? WHERE auction_ids IN (#{existing_auc_ids.join(',')})"
-    # ActiveRecord::Base.connection.execute(sql)
+    unless existing_auc_ids.blank?
+      sql = "UPDATE auctions SET last_seen_scan_id = #{AuctionHouse.current_scan.id} WHERE auction_id IN (#{existing_auc_ids.join(',')})"
+      ActiveRecord::Base.connection.execute(sql)
+    end
 
     # this should leave us with the ids of the new auctions
     new_auction_ids = auc_ids - existing_auc_ids
     new_auctions = aucs.delete_if{|a| !new_auction_ids.include?(a["auc"])}
 
     # get the item_ids
-    new_auc_item_ids = new_auctions.collect{|a| a["id"]}
+    new_auc_item_ids = new_auctions.collect{|a| a['id']}
     existing_items = Item.where(:item_id => new_auc_item_ids)
     existing_item_ids = existing_items.collect{|i| i.item_id}
 
+    newly_created_items = {}
     new_auctions.each{|a|
-      index = existing_item_ids.index(a["id"])
+      index = existing_item_ids.index(a['id'])
       if index === nil
-        logger.info "Inserting Item #{a['n']}"
-        a["item_id"] =  Item.create_from_auction_hash(a).id
+        if newly_created_items[a['id']].blank?
+          logger.info "Inserting Item #{a['n']}"
+          newly_created_items[a['id']] = Item.create_from_auction_hash(a)
+        end
+        a["item_id"] = newly_created_items[a['id']].id
       else
         a["item_id"] = existing_items[index].id
       end
@@ -45,10 +51,15 @@ class Auction < ActiveRecord::Base
     existing_players = Player.where(:name => new_auc_player_names)
     existing_player_names = existing_players.collect{|p| p.name}
 
+    newly_created_players = {}
     new_auctions.each{|a|
       index = existing_player_names.index(a["seller"])
       if index === nil
-        a["player_id"] = Player.create(:name => a["seller"]).id
+        if newly_created_players[a['seller']].blank?
+          logger.info "Inserting Player #{a['seller']}"
+          newly_created_players[a['seller']] = Player.create(:name => a["seller"])
+        end
+        a["player_id"] = newly_created_players[a['seller']].id
       else
         a["player_id"] = existing_players[index].id
       end
