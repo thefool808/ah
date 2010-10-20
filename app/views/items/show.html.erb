@@ -2,4 +2,4 @@
 <%= wowhead_item_link(@item) %><br />
 <br />
 <h2>Auctions</h2>
-<%= render :partial => 'auctions/short', :locals => {:auctions => @item.auctions} %>
+<%= render :partial => 'auctions/short', :locals => {:auctions => @item.auctions, :latest_scan_id => @latest_scan.id} %>

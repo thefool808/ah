@@ -14,10 +14,6 @@ group :test, :development do
   gem 'autotest'
 end
 
-group :development do
-  gem 'pg'
-end
-
 # Use unicorn as the web server
 # gem 'unicorn'
 

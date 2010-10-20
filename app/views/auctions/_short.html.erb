@@ -5,23 +5,54 @@
     <th>Quantity</th>
     <th>Total Buyout</th>
     <th>Buyout Per</th>
+    <th>First Seen</th>
+    <th>Last Seen</th>
   </tr>
   </thead>
   <tbody>
   <% for auction in auctions -%>
-  <tr>
+  <tr class="<%= auction.last_seen_scan_id %>">
     <td><%= auction.player.name %></td>
     <td><%= auction.quantity %></td>
     <td><%= raw_to_wow auction.buyout %></td>
     <td><%= raw_to_wow auction.per_unit_buyout %></td>
+    <td><%= datetime auction.first_seen_scan.started_at %></td>
+    <td><%= datetime auction.last_seen_scan.started_at %></td>
   </tr>
   <% end -%>
   </tbody>
 </table>
 <script type="text/javascript">
-$(document).ready(function()
-    {
-        $("#auctions").tablesorter();
+// add parser through the tablesorter addParser method
+$.tablesorter.addParser({
+  // set a unique id
+  id: 'wow_currency',
+  is: function(s) {
+    // return false so this parser is not auto detected
+    return false;
+  },
+  format: function(s) {
+    // format your data for normalization
+    var ar = s.match(/\d+/g);
+    return parseInt(ar[2]) + (parseInt(ar[1]) * 100) + (parseInt(ar[0]) * 10000);
+  },
+  // set type, either numeric or text
+  type: 'numeric'
+});
+
+$(document).ready(function() {
+  $("#auctions").tablesorter({
+    debug: true,
+    headers: {
+      2: {sorter:'wow_currency'},
+      3: {sorter:'wow_currency'}
     }
-);
+  });
+});
+$(document).ready(function() {
+  $("tr.<%= latest_scan_id %>").
+    css('background-color', '#FFF');
+  $("tr").not(".<%= latest_scan_id %>").
+    css('background-color', '#E0E0E0');
+});
 </script>

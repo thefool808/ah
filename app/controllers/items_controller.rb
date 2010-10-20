@@ -2,7 +2,11 @@ class ItemsController < ApplicationController
   def index; end
 
   def show
-    @item = Item.find(params[:id], :include => {:auctions => [:last_seen_scan, :player]})
+    @latest_scan = Scan.find(:last)
+    @item = Item.find(
+      params[:id],
+      :include => {:auctions => [:last_seen_scan, :first_seen_scan, :player]}
+    )
   end
 
   def new
@@ -19,9 +23,10 @@ class ItemsController < ApplicationController
   end
 
   def search
-    @items = Item.find(:all, :conditions => ['UPPER(name) LIKE ?', "#{params[:name].upcase}"])
+    @condish = ['name LIKE ?', "#{params[:name]}"]
+    @items = Item.find(:all, :conditions => @condish)
     if @items.length == 0
-      render :text => "no results"
+      render :no_results
     elsif @items.length == 1
       redirect_to item_url(@items.first)
     else
