@@ -25,10 +25,6 @@ class Auction < ActiveRecord::Base
     return a
   end
 
-  def ah_current_scan
-    AuctionHouse.current_scan
-  end
-
 private
   def self.extract_attributes_from_auction_hash(auction_hash)
     item = Item.find_or_create_from_auction_hash(auction_hash)

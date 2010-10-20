@@ -41,6 +41,14 @@ module Ah
   end
 end
 
+require 'ah/statistics'
+class Numeric
+  include(Ah::Statistics::Numeric)
+end
+class StatArray < Array
+  include(Ah::Statistics::Array)
+end
+
 class Object
   def logger
     Rails.logger
