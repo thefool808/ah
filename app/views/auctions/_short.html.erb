@@ -15,8 +15,8 @@
   <tr title="<%= render :partial => '/auctions/short_tooltip', :locals => {:auction => auction} %>">
     <td style="<%= style %>"><%= auction.player.name %></td>
     <td style="<%= style %>"><%= auction.quantity %></td>
-    <td style="<%= style %>"><%= raw_to_wow auction.buyout %></td>
-    <td style="<%= style %>"><%= raw_to_wow auction.per_unit_buyout %></td>
+    <td style="<%= style %>"><%= number_to_wow_currency auction.buyout %></td>
+    <td style="<%= style %>"><%= number_to_wow_currency auction.per_unit_buyout %></td>
     <td style="<%= style %>"><%= datetime auction.first_seen_scan.started_at %></td>
     <td style="<%= style %>"><%= datetime auction.last_seen_scan.started_at %></td>
   </tr>

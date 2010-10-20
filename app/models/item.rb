@@ -1,5 +1,6 @@
 class Item < ActiveRecord::Base
-  has_many :auctions, :order => 'last_seen_scan_id DESC, per_unit_buyout'
+  has_many :auctions, :order => 'last_seen_scan_id DESC, per_unit_buyout, buyout'
+  has_many :current_auctions, :class_name => 'Auction', :conditions => ['last_seen_scan_id = ?', Scan.latest_scan_id]
 
   def search_auction_house
     AuctionHouse.new.login!.search(Query.for_item(self))
@@ -14,12 +15,13 @@ class Item < ActiveRecord::Base
     return i
   end
 
-  def current_auctions
-    self.auctions.delete_if{|a| a.last_seen_scan_id != Scan.latest_scan_id}
+  def current_buyouts
+    return @current_buyouts if @current_buyouts
+    @current_buyouts = current_auctions.inject(StatArray.new){|ar, a| a.quantity.times {ar << a.per_unit_buyout}; ar}
   end
 
-  def current_buyouts
-    current_auctions.inject(StatArray.new){|ar, a| a.quantity.times {ar << a.per_unit_buyout}; ar}
+  def current_lowest_buyout
+    current_buyouts.sort.first
   end
 
   def current_median_buyout
@@ -31,7 +33,12 @@ class Item < ActiveRecord::Base
   end
 
   def overall_buyouts
-    auctions.inject(StatArray.new){|ar, a| a.quantity.times {ar << a.per_unit_buyout}; ar}
+    return @overall_buyouts if @overall_buyouts
+    @overall_buyouts = auctions.inject(StatArray.new){|ar, a| a.quantity.times {ar << a.per_unit_buyout}; ar}
+  end
+
+  def overall_lowest_buyout
+    overall_buyouts.sort.first
   end
 
   def overall_median_buyout
@@ -40,6 +47,10 @@ class Item < ActiveRecord::Base
 
   def overall_mean_buyout
     overall_buyouts.mean
+  end
+
+  def auction_volume
+    auctions.inject(0){|int, a| int += a.quantity}
   end
 
 private

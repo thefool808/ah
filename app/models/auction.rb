@@ -25,6 +25,10 @@ class Auction < ActiveRecord::Base
     return a
   end
 
+  def per_unit_buyout
+    self[:per_unit_buyout] || self[:buyout] || self[:per_unit_bid] || self[:next_minimum_bid]
+  end
+
 private
   def self.extract_attributes_from_auction_hash(auction_hash)
     item = Item.find_or_create_from_auction_hash(auction_hash)

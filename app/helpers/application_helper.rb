@@ -1,7 +1,7 @@
 module ApplicationHelper
-  def raw_to_wow(raw)
-    return "nil" if raw.blank?
-    m = raw.to_i
+  def number_to_wow_currency(num)
+    return "nil" if num.blank?
+    m = num.to_i
     gold = sprintf("%dg", m / 10000)
     silver = sprintf("%ds", (m / 100) % 100)
     copper = sprintf("%dc", m % 100)
