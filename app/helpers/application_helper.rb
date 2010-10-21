@@ -2,10 +2,12 @@ module ApplicationHelper
   def number_to_wow_currency(num)
     return "nil" if num.blank?
     m = num.to_i
-    gold = sprintf("%dg", m / 10000)
-    silver = sprintf("%ds", (m / 100) % 100)
+    gold = sprintf("%dg ", m / 10000)
+    gold = '' if gold == '0g '
+    silver = sprintf("%ds ", (m / 100) % 100)
+    silver = '' if silver == '0s ' && gold == ''
     copper = sprintf("%dc", m % 100)
-    "#{gold} #{silver} #{copper}"
+    "#{gold}#{silver}#{copper}"
   end
 
   def datetime(date)

@@ -15,39 +15,60 @@
   <tr title="Auction ID: <%= auction.auction_id %>">
     <td style="<%= style %>"><%= link_to auction.player.name, player_url(auction.player) %></td>
     <td style="<%= style %>"><%= auction.quantity %></td>
-    <td style="<%= style %>"><%= number_to_wow_currency auction.buyout %></td>
-    <td style="<%= style %>"><%= number_to_wow_currency auction.per_unit_buyout %></td>
-    <td style="<%= style %>"><%= time_from_now auction.first_seen_scan.started_at %></td>
-    <td style="<%= style %>"><%= time_from_now auction.last_seen_scan.started_at %></td>
+    <td style="<%= style %>">
+      <!-- <%= auction.buyout %> -->
+      <%= number_to_wow_currency auction.buyout %>
+    </td>
+    <td style="<%= style %>">
+      <!-- <%= auction.per_unit_buyout %> -->
+      <%= number_to_wow_currency auction.per_unit_buyout %>
+    </td>
+    <td style="<%= style %>">
+      <!-- <%= auction.first_seen_scan.started_at.to_i %> -->
+      <%= time_from_now auction.first_seen_scan.started_at %>
+    </td>
+    <td style="<%= style %>">
+      <!-- <%= auction.last_seen_scan.started_at.to_i %> -->
+      <%= time_from_now auction.last_seen_scan.started_at %>
+    </td>
   </tr>
   <% end -%>
   </tbody>
 </table>
 <script type="text/javascript">
+var inner_html = function(node){ return node.innerHTML; };
 $.tablesorter.addParser({
   id: 'wow_currency',
   is: function(s) { return false; },
   format: function(s) {
-    var ar = s.match(/\d+/g);
-    if (ar.length != 3){ return -1 };
-    return parseInt(ar[2]) + (parseInt(ar[1]) * 100) + (parseInt(ar[0]) * 10000);
+    var ar = s.split(' ');
+    var power = 0;
+    var sum = 0;
+    $.each(ar.reverse(), function(index, value){
+      sum += (parseInt(value) * (Math.pow(100, power)));
+      power += 1;
+    });
+    return sum;
+  },
+  type: 'numeric'
+});
+$.tablesorter.addParser({
+  id: 'comment_number',
+  is: function(s) { return false; },
+  format: function(s) {
+    return s.match(/\d+/);
   },
   type: 'numeric'
 });
 $(document).ready(function() {
   $("#auctions").tablesorter({
-    debug: true,
+    textExtraction: inner_html,
     headers: {
-      2: {sorter:'wow_currency'},
-      3: {sorter:'wow_currency'}
+      2: {sorter:'comment_number'},
+      3: {sorter:'comment_number'},
+      4: {sorter:'comment_date'},
+      5: {sorter:'comment_date'}
     }
-  });
-});
-$(document).ready(function() {
-  $("tr[title]").tooltip({
-    position: "top right",
-    offset: [20, -100],
-    opacity: 0.7
   });
 });
 </script>

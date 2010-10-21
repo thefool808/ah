@@ -2,6 +2,9 @@ class Item < ActiveRecord::Base
   has_many :auctions, :order => 'last_seen_scan_id DESC, (buyout / quantity), quantity'
   has_many :current_auctions, :class_name => 'Auction', :conditions => ['last_seen_scan_id = ?', Scan.latest_scan_id]
 
+  def get_armory_info
+  end
+
   def search_auction_house
     AuctionHouse.new.login!.search(Query.for_item(self))
   end

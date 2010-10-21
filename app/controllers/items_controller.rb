@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   def show
     @item = Item.find(
       params[:id],
-      :include => {:auctions => [:last_seen_scan, :first_seen_scan, :player]}
+      :include => {:current_auctions => [:last_seen_scan, :first_seen_scan, :player]}
     )
   end
 
