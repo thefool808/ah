@@ -1,6 +1,9 @@
 class Item < ActiveRecord::Base
   has_many :auctions, :order => 'last_seen_scan_id DESC, (buyout / quantity), quantity'
-  has_many :current_auctions, :class_name => 'Auction', :conditions => ['last_seen_scan_id = ?', Scan.latest_scan_id]
+  has_many :current_auctions,
+    :class_name => 'Auction',
+    :conditions => ['last_seen_scan_id = ?', Scan.latest_scan_id],
+    :order => 'last_seen_scan_id DESC, (buyout / quantity), quantity'
 
   def get_armory_info
   end
